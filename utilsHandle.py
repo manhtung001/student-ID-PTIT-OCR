@@ -1,35 +1,26 @@
 import os
-
-dir_path = os.path.dirname(os.path.realpath(__file__))
 import sys
 from pathlib import Path
-
 import cv2
 import torch
+from models.common import DetectMultiBackend
+from utils.datasets import LoadImages
+from utils.general import (LOGGER, check_img_size, colorstr,
+                           increment_path, non_max_suppression, scale_coords, strip_optimizer, xyxy2xywh)
+from utils.plots import Annotator, colors, save_one_box
+from utils.torch_utils import select_device, time_sync
+from os.path import join
+from os import listdir
+from vietocr.tool.predictor import Predictor
+from vietocr.tool.config import Cfg
+from PIL import Image
 
+dir_path = os.path.dirname(os.path.realpath(__file__))
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # YOLOv5 root directory
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))  # add ROOT to PATH
 ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
-
-from models.common import DetectMultiBackend
-from utils.datasets import IMG_FORMATS, VID_FORMATS, LoadImages, LoadStreams
-from utils.general import (LOGGER, check_file, check_img_size, check_imshow, check_requirements, colorstr,
-                           increment_path, non_max_suppression, print_args, scale_coords, strip_optimizer, xyxy2xywh)
-from utils.plots import Annotator, colors, save_one_box
-from utils.torch_utils import select_device, time_sync
-
-from os.path import isfile, join
-from os import listdir
-
-from vietocr.tool.predictor import Predictor
-from vietocr.tool.config import Cfg
-from PIL import Image
-
-from starlette.responses import StreamingResponse
-import io
-from fastapi.responses import FileResponse
 
 config = Cfg.load_config_from_name('vgg_transformer')
 
@@ -51,7 +42,9 @@ class pathImg:
     def set_path_avatar(self, path):
         self.path_avatar = path
 
+
 pathImg = pathImg()
+
 
 def get_path():
     return pathImg
@@ -91,22 +84,8 @@ def predict(source):
 
 
 def cropImg(source):
-    # source = str(source)
-    # save_img = not nosave and not source.endswith('.txt')  # save inference images
-    # is_file = Path(source).suffix[1:] in (IMG_FORMATS + VID_FORMATS)
-    # is_url = source.lower().startswith(('rtsp://', 'rtmp://', 'http://', 'https://'))
-    # webcam = source.isnumeric() or source.endswith('.txt') or (is_url and not is_file)
-    # if is_url and is_file:
-    #     source = check_file(source)  # download
-
-    # python detect.py --weights models/best.pt --img 640 --conf 0.1 --source 0
-
-    project = ROOT / 'imgDetected'
     save_txt = False
-    # weights = 'yolov5/models/best.pt'
-    # data = ROOT / 'yolo5' / 'data/coco128.yaml'
     imgsz = (640, 640)
-    half = False
 
     weights = 'models/best_ver3.pt'
     data = ROOT / 'data/coco128.yaml'
@@ -128,13 +107,10 @@ def cropImg(source):
     visualize = False  # visualize features
     update = False  # update all models
     project = ROOT / 'runs/detect'  # save results to project/name
-    name = 'exp'  # save results to project/name
-    exist_ok = False  # existing project/name ok, do not increment
     line_thickness = 3  # bounding box thickness (pixels)
     hide_labels = False  # hide labels
     hide_conf = False  # hide confidences
     half = False  # use FP16 half-precision inference
-    dnn = False  # use OpenCV DNN for ONNX inference
 
     save_img = not nosave and not source.endswith('.txt')  # save inference images
 
@@ -179,9 +155,6 @@ def cropImg(source):
         # NMS
         pred = non_max_suppression(pred, conf_thres, iou_thres, classes, agnostic_nms, max_det=max_det)
         dt[2] += time_sync() - t3
-
-        # Second-stage classifier (optional)
-        # pred = utils.general.apply_classifier(pred, classifier_model, im, im0s)
 
         # Process predictions
         for i, det in enumerate(pred):  # per image

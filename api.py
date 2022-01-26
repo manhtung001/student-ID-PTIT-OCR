@@ -2,12 +2,10 @@ import uvicorn
 from fastapi import FastAPI, UploadFile, File, HTTPException
 import shutil
 from utilsHandle import *
-
+from fastapi.responses import FileResponse
 import os
 
 app = FastAPI(title='ID PTIT OCR by Khong Tung')
-
-# By using @app.get("/") you are allowing the GET method to work for the / endpoint.
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 tmpPath = os.path.join(dir_path, 'tmp')
