@@ -3,6 +3,8 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 import shutil
 from utilsHandle import *
 
+import os
+
 app = FastAPI(title='ID PTIT OCR by Khong Tung')
 
 # By using @app.get("/") you are allowing the GET method to work for the / endpoint.
@@ -21,6 +23,20 @@ def home():
            "/docs. "
 
 
+@app.get("/getCard")
+def getCard():
+    file_path = get_path().path_Card
+    if os.path.exists(file_path):
+        return FileResponse(file_path)
+
+
+@app.get("/getAvatar")
+def getAvatar():
+    file_path = get_path().path_avatar
+    if os.path.exists(file_path):
+        return FileResponse(file_path)
+
+
 @app.post("/upload")
 async def uploadImg(fileUpload: UploadFile = File(...)):
     # 1. VALIDATE INPUT FILE
@@ -34,10 +50,10 @@ async def uploadImg(fileUpload: UploadFile = File(...)):
         file_object.write(fileUpload.file.read())
     print(f"info: file {fileUpload.filename} saved at {file_location}")
 
-    predict(file_location)
+    res = predict(file_location)
 
     return {
-        "result": 0,
+        "result": res,
     }
 
 

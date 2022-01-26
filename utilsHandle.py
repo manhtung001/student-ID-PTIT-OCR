@@ -1,6 +1,5 @@
 import os
 
-
 dir_path = os.path.dirname(os.path.realpath(__file__))
 import sys
 from pathlib import Path
@@ -13,7 +12,6 @@ ROOT = FILE.parents[0]  # YOLOv5 root directory
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))  # add ROOT to PATH
 ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
-
 
 from models.common import DetectMultiBackend
 from utils.datasets import IMG_FORMATS, VID_FORMATS, LoadImages, LoadStreams
@@ -31,17 +29,36 @@ from PIL import Image
 
 from starlette.responses import StreamingResponse
 import io
+from fastapi.responses import FileResponse
 
 config = Cfg.load_config_from_name('vgg_transformer')
 
 config['weights'] = 'transformerocr.pth'
-config['cnn']['pretrained']=False
+config['cnn']['pretrained'] = False
 config['device'] = 'cuda:0'
-config['predictor']['beamsearch']=False
+config['predictor']['beamsearch'] = False
 detector = Predictor(config)
 
+
+class pathImg:
+    def __init__(self):
+        path_card = ''
+        path_avatar = ''
+
+    def set_path_card(self, path):
+        self.path_Card = path
+
+    def set_path_avatar(self, path):
+        self.path_avatar = path
+
+pathImg = pathImg()
+
+def get_path():
+    return pathImg
+
+
 def predict(source):
-    # cropImg(source)
+    cropImg(source)
     list_Dirs = [f for f in listdir(join(dir_path, 'runs/detect'))]
     full_path = join(join(dir_path, 'runs/detect'), join(list_Dirs[-1], 'crops'))
     list_cropped = [f for f in listdir(full_path)]
@@ -52,9 +69,10 @@ def predict(source):
         path_imgs = [f for f in listdir(path_folder)]
         count = 0
         for imgPath in path_imgs:
-            img = Image.open(join(path_folder,imgPath))
+            img = Image.open(join(path_folder, imgPath))
             if folderPath not in ['avatar', 'card']:
                 s = detector.predict(img)
+                print(s)
                 split_res = s.split(":")
                 if len(split_res) == 2:
                     result[split_res[0].strip()] = split_res[1].strip()
@@ -64,12 +82,12 @@ def predict(source):
                 else:
                     result[folderPath + str(count)] = s
                 count += 1
-            else:
-                result[folderPath] = StreamingResponse(io.BytesIO(img.tobytes()), media_type="image/png")
+            elif folderPath == 'avatar':
+                pathImg.set_path_avatar(join(path_folder, imgPath))
+            elif folderPath == 'card':
+                pathImg.set_path_card(join(path_folder, imgPath))
     print(result)
-
-
-predict("hihi")
+    return result
 
 
 def cropImg(source):
@@ -90,14 +108,14 @@ def cropImg(source):
     imgsz = (640, 640)
     half = False
 
-    weights = 'models/best.pt'
+    weights = 'models/best_ver3.pt'
     data = ROOT / 'data/coco128.yaml'
 
     nosave = False
 
     conf_thres = 0.25  # confidence threshold
     iou_thres = 0.45  # NMS IOU threshold
-    max_det = 1000 # maximum detections per image
+    max_det = 1000  # maximum detections per image
 
     view_img = False  # show results
 
@@ -134,7 +152,6 @@ def cropImg(source):
     half &= (pt or jit or onnx or engine) and device.type != 'cpu'  # FP16 supported on limited backends with CUDA
     if pt or jit:
         model.model.half() if half else model.model.float()
-
 
     dataset = LoadImages(source, img_size=imgsz, stride=stride, auto=pt)
     bs = 1  # batch_size
