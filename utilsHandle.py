@@ -87,7 +87,7 @@ def cropImg(source):
     save_txt = False
     imgsz = (640, 640)
 
-    weights = 'models/best_ver3.pt'
+    weights = 'models/best_l_ver3.pt'
     data = ROOT / 'data/coco128.yaml'
 
     nosave = False
