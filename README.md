@@ -1,6 +1,3 @@
-# student-ID-PTIT-OCR
-
-
 ## Main feature
 
 1. **Crop id card and avatar from image**
