@@ -26,8 +26,8 @@ config = Cfg.load_config_from_name('vgg_transformer')
 
 config['weights'] = 'transformerocr.pth'
 config['cnn']['pretrained'] = False
-# config['device'] = 'cuda:0'
-config['device'] = 'cpu'
+config['device'] = 'cuda:0'
+# config['device'] = 'cpu'
 config['predictor']['beamsearch'] = False
 detector = Predictor(config)
 
