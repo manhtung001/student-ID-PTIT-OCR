@@ -3,6 +3,27 @@
 1. **Crop id card and avatar from image**
 2. **Show infomation about student in id card**
 
+## Demo
+
+1. Image upload
+
+![alt text](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
+
+```
+{
+  "result": {
+    "Lớp": "D17CQPTO2-B",
+    "id": "B17DCPTO22",
+    "Ngành": "CN ĐPT",
+    "HỆ": "ĐHCQ",
+    "Họ và tên": "Phùng Thị Ngọc Ánh",
+    "Sinh ngày": "02/12/1999",
+    "Hộ khẩu TT": "H. Thạch Thất - Hà Nội",
+    "Khóa": "2017-2022"
+  }
+}
+```
+
 ## How to test this app
 
 ### Requirements
