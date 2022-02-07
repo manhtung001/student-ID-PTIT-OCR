@@ -5,10 +5,15 @@
 
 ## Demo
 
-1. Image upload
+1. Image post to api /upload:
 
-![alt text](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
+![alt text](https://github.com/manhtung001/student-ID-PTIT-OCR/blob/main/readmeUtils/origin.jpg?raw=true)
 
+Result from backend:
+
+![alt text](https://github.com/manhtung001/student-ID-PTIT-OCR/blob/main/readmeUtils/result.jpg?raw=true)
+
+2. Response from api /upload:
 ```
 {
   "result": {
@@ -23,6 +28,14 @@
   }
 }
 ```
+
+3.1. Response from api get /avatar:
+
+![alt text](https://github.com/manhtung001/student-ID-PTIT-OCR/blob/main/readmeUtils/avatar.jpg?raw=true)
+
+3.2. Response from api get /card:
+
+![alt text](https://github.com/manhtung001/student-ID-PTIT-OCR/blob/main/readmeUtils/card.jpg?raw=true)
 
 ## How to test this app
 
